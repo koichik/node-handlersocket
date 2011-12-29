@@ -1,9 +1,9 @@
 { "name" : "node-handlersocket"
-, "version" : "0.0.3"
+, "version" : "0.1.0-pre"
 , "description" : "HandlerSocket client for Node.js"
 , "homepage" : "http://github.com/koichik/node-handlersocket/"
-, "author" : "Koichi Kobayashi <koichik@improvement.jp> (http://d.hatena.ne.jp/koichik/)"
-, "main" : "node-handlersocket"
+, "author" : "Koichi Kobayashi <koichik@improvement.jp>"
+, "main" : "./index.js"
 , "directories" :
   { "lib" : "./lib"
   , "example" : "./example"
@@ -19,5 +19,11 @@
   , "private" : "git@github.com:koichik/node-handlersocket.git"
   , "web" : "http://github.com/koichik/node-handlersocket"
   }
-, "engines" : { "node" : ">=0.3.0" }
+, "engines" : { "node" : ">=0.6.0" }
+, "devDependencies" :
+  { "vows" : "*"
+  }
+, "scripts" :
+  { "test" : "./node_modules/vows/bin/vows test/*.js"
+  }
 }
