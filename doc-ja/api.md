@@ -120,7 +120,7 @@ MySQL 上のインデックスを表すオブジェクトです．
     * `err` : 操作が成功した場合は `null`，失敗した場合は `Error` オブジェクトが渡されます．
     * `results` : 更新した行数が渡されます．
 
-### Index.remove(op, keys, [limit, [offset]], callback)
+### Index.delete(op, keys, [limit, [offset]], callback)
 
 インデックスを使用して行を更新します．
 

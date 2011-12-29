@@ -1,5 +1,7 @@
-var vows = require('vows'), assert = require('assert'), events = require('events'),
-    hs = require('../lib/node-handlersocket');
+var vows = require('vows');
+var assert = require('assert');
+var events = require('events');
+var hs = require('../index');
 
 vows.describe('Connect').addBatch({
   'connecting' : {
@@ -9,7 +11,7 @@ vows.describe('Connect').addBatch({
         var con = hs.connect(options);
         con.on('connect', function() {
           emitter.emit('success', con);
-          con.end();
+          con.close();
         });
         con.on('error', function(err) {
           emitter.emit('success', err);

@@ -1,5 +1,8 @@
-var vows = require('vows'), assert = require('assert'), events = require('events'), util = require('util'),
-    hs = require('../lib/node-handlersocket');
+var vows = require('vows');
+var assert = require('assert');
+var events = require('events');
+var util = require('util');
+var hs = require('../index');
 
 //hs._debug = true;
 var con;
@@ -26,10 +29,10 @@ vows.describe('OpenIndex').addBatch({
       },
       'shoud have 3 columns' : function(err, index) {
         assert.equal(index._columnCount, 3);
-      },
-      'after' : function(err, index) {
-        con.end();
       }
+    },
+    teardown : function(con) {
+      con.close();
     }
   }
 }).export(module);

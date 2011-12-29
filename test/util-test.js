@@ -1,4 +1,6 @@
-var vows = require('vows'), assert = require('assert'), hs = require('../lib/node-handlersocket');
+var vows = require('vows');
+var assert = require('assert');
+var hs = require('../index');
 
 vows.describe('Utilities').addBatch({
   'encodeField' : {

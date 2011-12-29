@@ -62,7 +62,7 @@ for more information.
       });
     });
 
-## remove (delete)
+## delete
 
     var hs = require('node-handlersocket');
 
@@ -70,7 +70,7 @@ for more information.
     con.on('connect', function() {
       con.openIndex('test', 'EMPLOYEE', 'PRIMARY', [ 'EMPLOYEE_ID', 'EMPLOYEE_NO',
         'EMPLOYEE_NAME' ], function(err, index) {
-        index.remove('=', 100, function(err, rows) {
+        index.delete('=', 100, function(err, rows) {
           console.log(rows);
           con.end();
         });
@@ -192,7 +192,7 @@ To update a records.
         * `err` : an `Error` object when the request failed, otherwise `null`.
         * `rows` : a number of updated rows.
 
-### Method : Index.remove(op, keys, [ limit, [ offset ] ], callback)
+### Method : Index.delete(op, keys, [ limit, [ offset ] ], callback)
 
 To delete a records.
 
