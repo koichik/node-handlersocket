@@ -6,16 +6,15 @@ var hs = require('../index');
 
 hs._debug = false;
 var con;
-function openIndex(port, callback) {
-  con = hs.connect({'port': port});
-  con.on('connect', function() {
+function openIndex(options, callback) {
+  con = hs.connect(options, function() {
     con.openIndex('test', 'EMPLOYEE', 'PRIMARY',
                   ['EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME'],
                   callback);
   });
 }
 function find(callback) {
-  openIndex(9998, function(err, index) {
+  openIndex({ port : 9998 }, function(err, index) {
     if (err) return callback(err);
     index.find('=', [ 100 ], callback);
   });
@@ -40,7 +39,7 @@ suite.addBatch({
   'inserting' : {
     topic : function() {
       var self = this;
-      openIndex(9999, function(err, index) {
+      openIndex({ port : 9999, auth : 'node' }, function(err, index) {
         if (err) return self.callback(err);
         index.insert([ '100', '9999', 'KOICHIK' ], self.callback);
       })
@@ -71,7 +70,7 @@ suite.addBatch({
   'updating' : {
     topic : function() {
       var self = this;
-      openIndex(9999, function(err, index) {
+      openIndex({ port : 9999, auth : 'node' }, function(err, index) {
         if (err) return self.callback(err);
         index.update('=', [100], [ '100', '9999', 'EBIYURI' ], self.callback);
       })
@@ -104,7 +103,7 @@ suite.addBatch({
   'deleting' : {
     topic : function() {
       var self = this;
-      openIndex(9999, function(err, index) {
+      openIndex({ port : 9999, auth : 'node' }, function(err, index) {
         if (err) return self.callback(err);
         index.delete('=', [100], self.callback);
       })

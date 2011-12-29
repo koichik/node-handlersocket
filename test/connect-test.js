@@ -20,16 +20,16 @@ vows.describe('Connect').addBatch({
       }
     },
     'with default host and port' : {
-      topic : function(topic) {
-        return topic();
+      topic : function(connect) {
+        return connect();
       },
       'should create a new Connection object' : function(con) {
         assert.instanceOf(con, hs.Connection);
       }
     },
     'with specific host and port' : {
-      topic : function(topic) {
-        return topic({
+      topic : function(connect) {
+        return connect({
           host : '127.0.0.1',
           port : 9999
         });
@@ -39,9 +39,31 @@ vows.describe('Connect').addBatch({
       }
     },
     'with illegal port' : {
-      topic : function(topic) {
-        return topic({
+      topic : function(connect) {
+        return connect({
           port : 10000
+        });
+      },
+      'should pass an Error object' : function(con) {
+        assert.instanceOf(con, Error);
+      }
+    },
+    'with auth' : {
+      topic : function(connect) {
+        return connect({
+          port : 9999,
+          auth : 'node'
+        });
+      },
+      'should create a new Connection object' : function(con) {
+        assert.instanceOf(con, hs.Connection);
+      }
+    },
+    'with illegal auth' : {
+      topic : function(connect) {
+        return connect({
+          port : 9999,
+          auth : 'hoge'
         });
       },
       'should pass an Error object' : function(con) {

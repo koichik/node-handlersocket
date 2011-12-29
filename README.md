@@ -79,7 +79,7 @@ for more information.
 
 # API
 
-## Function : connect([ options ])
+## Function : connect([ options ], [ connectListener ])
 
 Open a connection to HandlerSocket server.
 
@@ -87,9 +87,12 @@ Open a connection to HandlerSocket server.
     * `options` (optional) : an object with the following properties:
         * `host` : a host name or address (default is `'localhost'`).
         * `port` : a port number (default is `9998`).
+        * `auth` : an authentication key.
 
         **Note, the port 9998 only allows read operations, and the port 9999 allows write operations also.**
         See [HandlerSocket installation document](https://github.com/ahiguti/HandlerSocket-Plugin-for-MySQL/blob/master/docs-en/installation.en.txt) for more information.
+    * `connectListener` (optional) : It is automatically set as a listener for
+      the `'connect'` event.
 * Returns
     * a new `Connection` object.
 

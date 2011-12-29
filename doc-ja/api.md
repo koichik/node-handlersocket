@@ -1,6 +1,6 @@
 # API ドキュメント
 
-## connect([options]) 関数
+## connect([options], [connectListener]) 関数
 
 HandlerSocket サーバに接続します．
 
@@ -8,10 +8,12 @@ HandlerSocket サーバに接続します．
     * `options` (オプション) : 接続先を以下のプロパティとして持つオブジェクトです．
         * `host` : 接続先のホスト名または IP アドレス．デフォルトは `'localhost'` です．
         * `port` : 接続先のポート番号です．デフォルトは `9998` です．
+        * `auth` : 認証のキーです．
 
         **HandlerSocket のデフォルト設定では，9998 番ポートは参照のみ可能なことに注意してください．**
         9999 番ポートは更新も可能です．
         詳細は[HandlerSocketのインストールドキュメント](https://github.com/ahiguti/HandlerSocket-Plugin-for-MySQL/blob/master/docs-ja/installation.ja.txt)を参照してください．
+      * `connectListener` :  `'connect'` イベントに対するリスナーとして自動的に加えられます．
 * 戻り値
     * `Connection` オブジェクトを返します．
 
