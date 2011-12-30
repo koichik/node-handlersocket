@@ -20,11 +20,11 @@ vows.describe('Find').addBatch({
       topic : function(con) {
         con.openIndex('test', 'EMPLOYEE', 'PRIMARY',
                       ['EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME'],
-                      this.callback);
+                      ['EMPLOYEE_NO', 'EMPLOYEE_NAME'], this.callback);
       },
       'find one record with = operator' : {
         topic : function(index, con) {
-          index.find('=', [ 1 ], this.callback);
+          index.find('=', 1, this.callback);
         },
         'should pass a null to error' : function(err, results) {
           assert.isNull(err);
@@ -38,7 +38,7 @@ vows.describe('Find').addBatch({
       },
       'find some records with < operator' : {
         topic : function(index, con) {
-          index.find('<', [ 3 ], 10, 0, this.callback);
+          index.find('<', [ 3 ], { limit : 10 }, this.callback);
         },
         'should pass null to error' : function(err, results) {
           assert.isNull(err);
@@ -49,6 +49,63 @@ vows.describe('Find').addBatch({
         'should results equal to' : function(err, results) {
           assert.deepEqual(results[0], [ '2', '7499', 'ALLEN' ]);
           assert.deepEqual(results[1], [ '1', '7369', 'SMITH' ]);
+        }
+      },
+      'find some records with IN operator' : {
+        topic : function(index, con) {
+          index.find('=', index.in(1, 2, 3),
+                     { limit : 10, offset : 0 },
+                     this.callback);
+        },
+        'should pass null to error' : function(err, results) {
+          assert.isNull(err);
+        },
+        'should pass an array with 3 records' : function(err, results) {
+          assert.lengthOf(results, 3);
+        },
+        'should results equal to' : function(err, results) {
+          assert.deepEqual(results[0], [ '1', '7369', 'SMITH' ]);
+          assert.deepEqual(results[1], [ '2', '7499', 'ALLEN' ]);
+          assert.deepEqual(results[2], [ '3', '7521', 'WARD' ]);
+        }
+      },
+      'find some records with filter' : {
+        topic : function(index, con) {
+          index.find('<=', 10, {
+                       filters : index.filter('EMPLOYEE_NO', '>', 7800),
+                       limit : 10
+                     }, this.callback);
+        },
+        'should pass null to error' : function(err, results) {
+          assert.isNull(err);
+        },
+        'should pass an array with 2 records' : function(err, results) {
+          assert.lengthOf(results, 2);
+        },
+        'should results equal to' : function(err, results) {
+          assert.deepEqual(results[0], [ '10', '7844', 'TURNER' ]);
+          assert.deepEqual(results[1], [ '9', '7839', 'KING' ]);
+        }
+      },
+      'find some records with multiple filters' : {
+        topic : function(index, con) {
+          index.find('>=', 10, {
+                       filters : [
+                         index.while('EMPLOYEE_NO', '<=', 7900),
+                         index.filter('EMPLOYEE_NAME', '>', 'ADAMS')
+                       ],
+                       limit : 10
+                     }, this.callback);
+        },
+        'should pass null to error' : function(err, results) {
+          assert.isNull(err);
+        },
+        'should pass an array with 2 records' : function(err, results) {
+          assert.lengthOf(results, 2);
+        },
+        'should results equal to' : function(err, results) {
+          assert.deepEqual(results[0], [ '10', '7844', 'TURNER' ]);
+          assert.deepEqual(results[1], [ '12', '7900', 'JAMES' ]);
         }
       }
     },

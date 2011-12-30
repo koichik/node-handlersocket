@@ -1,6 +1,6 @@
 # API ドキュメント
 
-## connect([options], [connectListener]) 関数
+## hs.connect([options], [connectListener]) 関数
 
 HandlerSocket サーバに接続します．
 
@@ -137,3 +137,39 @@ MySQL 上のインデックスを表すオブジェクトです．
 * コールバック関数 : `function(err, rows)`
     * `err` : 操作が成功した場合は `null`，失敗した場合は `Error` オブジェクトが渡されます．
     * `results` : 更新した行数が渡されます．
+
+### index.in(pos, values)
+
+IN クライテリアを作成して返します．
+
+* 引数
+    * `pos` : 検索で使用するカラムのインデックスの中での位置を指定します．
+    * `values` : 取得対象となるインデックスの値の配列です．
+* 戻り値
+    * IN クライテリアオブジェクトを返します．
+
+### index.filter(column, op, value) 関数
+
+フィルタを作成して返します．
+
+* 引数
+    * `column` : 検索で使用するカラム名を指定します． `Connection.openIndex()`
+      で指定した `filterColumns` の中に含まれている必要があります．
+    * `op` : 演算子です．
+      '='`, `'>'`, `'>='`, `'<'`, `'<='` のいずれかを指定します．
+    * `value` : 取得対象となる値です．
+* 戻り値
+    * フィルタオブジェクトを返します．
+
+### index.while(column, op, value) 関数
+
+フィルタを作成して返します．
+
+* 引数
+    * `column` : 検索で使用するカラム名を指定します． `Connection.openIndex()`
+      で指定した `filterColumns` の中に含まれている必要があります．
+    * `op` : 演算子です．
+      '='`, `'>'`, `'>='`, `'<'`, `'<='` のいずれかを指定します．
+    * `value` : 取得対象となる値です．
+* 戻り値
+    * フィルタオブジェクトを返します．

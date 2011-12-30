@@ -4,7 +4,7 @@ var events = require('events');
 var util = require('util');
 var hs = require('../index');
 
-hs._debug = false;
+//hs._debug = true;
 var con;
 function openIndex(options, callback) {
   con = hs.connect(options, function() {
@@ -14,9 +14,16 @@ function openIndex(options, callback) {
   });
 }
 function find(callback) {
-  openIndex({ port : 9998 }, function(err, index) {
+  openIndex({}, function(err, index) {
     if (err) return callback(err);
-    index.find('=', [ 100 ], callback);
+    index.find('>=', 100, { limit: 10 }, callback);
+  });
+}
+function openIndexNameOnly(options, callback) {
+  con = hs.connect(options, function() {
+    con.openIndex('test', 'EMPLOYEE', 'PRIMARY',
+                  ['EMPLOYEE_NAME'],
+                  ['EMPLOYEE_NO', 'EMPLOYEE_NAME'], callback);
   });
 }
 
@@ -36,7 +43,7 @@ suite.addBatch({
   }
 });
 suite.addBatch({
-  'inserting' : {
+  'first inserting' : {
     topic : function() {
       var self = this;
       openIndex({ port : 9999, auth : 'node' }, function(err, index) {
@@ -52,7 +59,7 @@ suite.addBatch({
   }
 });
 suite.addBatch({
-  'finding after insert' : {
+  'finding after first insert' : {
     topic : function() {
       find(this.callback);
     },
@@ -67,12 +74,44 @@ suite.addBatch({
   }
 });
 suite.addBatch({
+  'second inserting' : {
+    topic : function() {
+      var self = this;
+      openIndex({ port : 9999, auth : 'node' }, function(err, index) {
+        if (err) return self.callback(err);
+        index.insert([ '101', '9998', 'EBIYURI' ], self.callback);
+      })
+    },
+    'should not be error' : function() {
+    },
+    teardown : function() {
+      con.close();
+    }
+  }
+});
+suite.addBatch({
+  'finding after second insert' : {
+    topic : function() {
+      find(this.callback);
+    },
+    'should pass an array which contains two records' : function(err, results) {
+      assert.isNull(err);
+      assert.lengthOf(results, 2);
+      assert.deepEqual(results[0], [ '100', '9999', 'KOICHIK' ]);
+      assert.deepEqual(results[1], [ '101', '9998', 'EBIYURI' ]);
+    },
+    teardown : function() {
+      con.close();
+    }
+  }
+});
+suite.addBatch({
   'updating' : {
     topic : function() {
       var self = this;
       openIndex({ port : 9999, auth : 'node' }, function(err, index) {
         if (err) return self.callback(err);
-        index.update('=', [100], [ '100', '9999', 'EBIYURI' ], self.callback);
+        index.update('=', 100, [ 100, '8888', 'KOICHIK2' ], self.callback);
       })
     },
     'should update one row' : function(err, rows) {
@@ -89,10 +128,85 @@ suite.addBatch({
     topic : function() {
       find(this.callback);
     },
-    'should pass an array which contains one record' : function(err, results) {
+    'should pass an array which contains two records' : function(err, results) {
       assert.isNull(err);
-      assert.lengthOf(results, 1);
-      assert.deepEqual(results[0], [ '100', '9999', 'EBIYURI' ]);
+      assert.lengthOf(results, 2);
+      assert.deepEqual(results[0], [ '100', '8888', 'KOICHIK2' ]);
+      assert.deepEqual(results[1], [ '101', '9998', 'EBIYURI' ]);
+    },
+    teardown : function() {
+      con.close();
+    }
+  }
+});
+suite.addBatch({
+  'updating with IN' : {
+    topic : function() {
+      var self = this;
+      openIndexNameOnly({ port : 9999, auth : 'node' }, function(err, index) {
+        if (err) return self.callback(err);
+        index.update('=', index.in(100, 101),
+                     { limit: 10 },
+                     'KOICHIK', self.callback);
+      })
+    },
+    'should update two rows' : function(err, rows) {
+      assert.isNull(err);
+      assert.equal(rows, 2);
+    },
+    teardown : function() {
+      con.close();
+    }
+  }
+});
+suite.addBatch({
+  'finding after update with IN' : {
+    topic : function() {
+      find(this.callback);
+    },
+    'should pass an array which contains two records' : function(err, results) {
+      assert.isNull(err);
+      assert.lengthOf(results, 2);
+      assert.deepEqual(results[0], [ '100', '8888', 'KOICHIK' ]);
+      assert.deepEqual(results[1], [ '101', '9998', 'KOICHIK' ]);
+    },
+    teardown : function() {
+      con.close();
+    }
+  }
+});
+suite.addBatch({
+  'updating with filter' : {
+    topic : function() {
+      var self = this;
+      openIndexNameOnly({ port : 9999, auth : 'node' }, function(err, index) {
+        if (err) return self.callback(err);
+        index.update('>=', 100, {
+                       filters: index.filter('EMPLOYEE_NO', '>', 9000),
+                       limit: 10
+                     },
+                     'EBIYURI', self.callback);
+      })
+    },
+    'should update one row' : function(err, rows) {
+      assert.isNull(err);
+      assert.equal(rows, 1);
+    },
+    teardown : function() {
+      con.close();
+    }
+  }
+});
+suite.addBatch({
+  'finding after update with select' : {
+    topic : function() {
+      find(this.callback);
+    },
+    'should pass an array which contains two records' : function(err, results) {
+      assert.isNull(err);
+      assert.lengthOf(results, 2);
+      assert.deepEqual(results[0], [ '100', '8888', 'KOICHIK' ]);
+      assert.deepEqual(results[1], [ '101', '9998', 'EBIYURI' ]);
     },
     teardown : function() {
       con.close();
@@ -105,12 +219,12 @@ suite.addBatch({
       var self = this;
       openIndex({ port : 9999, auth : 'node' }, function(err, index) {
         if (err) return self.callback(err);
-        index.delete('=', [100], self.callback);
+        index.delete('>=', 100, { limit: 10 }, self.callback);
       })
     },
-    'should delete one row' : function(err, rows) {
+    'should delete two rows' : function(err, rows) {
       assert.isNull(err);
-      assert.equal(rows, 1);
+      assert.equal(rows, 2);
     },
     teardown : function() {
       con.close();

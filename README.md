@@ -20,18 +20,84 @@ for more information.
 
 ## find (select)
 
-    var hs = require('node-handlersocket');
+```javascript
+var hs = require('node-handlersocket');
 
-    var con = hs.connect();
-    con.on('connect', function() {
-    con.openIndex('test', 'EMPLOYEE', 'PRIMARY', [ 'EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME' ],
-      function(err, index) {
-        index.find('=', 1, function(err, results) {
-          console.log(results[0]);
-          con.end();
-        });
-      });
+var con = hs.connect(function() {
+  con.openIndex('test', 'EMPLOYEE', 'PRIMARY',
+                [ 'EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME' ],
+                function(err, index) {
+    index.find('=', 1, function(err, results) {
+      console.log(results[0]);
+      con.end();
     });
+  });
+});
+```
+
+## find (select) with limit and offset
+
+```javascript
+var hs = require('node-handlersocket');
+
+var con = hs.connect(function() {
+  con.openIndex('test', 'EMPLOYEE', 'PRIMARY',
+                [ 'EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME' ],
+                function(err, index) {
+    index.find('>=', 1, { limit: 10, offset: 0 }, function(err, results) {
+      results.forEach(function(row) {
+        console.log(row);
+      });
+      con.end();
+    });
+  });
+});
+```
+
+## find (select) with IN
+
+```javascript
+var hs = require('node-handlersocket');
+
+var con = hs.connect(function() {
+  con.openIndex('test', 'EMPLOYEE', 'PRIMARY',
+                [ 'EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME' ],
+                function(err, index) {
+    index.find('=', index.in(1, 2, 3),
+               { limit: 10 },
+               function(err, results) {
+      results.forEach(function(row) {
+        console.log(row);
+      });
+      con.end();
+    });
+  });
+});
+```
+
+## find (select) with filter
+
+```javascript
+var hs = require('node-handlersocket');
+
+var con = hs.connect(function() {
+  con.openIndex('test', 'EMPLOYEE', 'PRIMARY',
+                [ 'EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME' ],
+                [ 'EMPLOYEE_NO' ],
+                function(err, index) {
+    index.find('>=', 1, {
+                 filters: index.filter('EMPLOYEE_NO', '<', 7800),
+                 limit: 10
+               },
+               function(err, results) {
+      results.forEach(function(row) {
+        console.log(row);
+      });
+      con.end();
+    });
+  });
+});
+```
 
 ## insert
 
@@ -79,7 +145,7 @@ for more information.
 
 # API
 
-## Function : connect([ options ], [ connectListener ])
+## Function : hs.connect([ options ], [ connectListener ])
 
 Open a connection to HandlerSocket server.
 
@@ -129,7 +195,7 @@ Emitted when an error occurs.
     * Parameters
         * `err` : an error that occurred.
 
-### Method : Connection.openIndex(database, table, index, columns, callback)
+### Method : Connection.openIndex(database, table, index, columns, filterColumns, callback)
 
 Open an index.
 
@@ -138,6 +204,7 @@ Open an index.
     * `table` : a table name.
     * `index` : an index name. If 'PRIMARY' is specified, the primary index is open.
     * `columns` : an array of columns names.
+    * `filterColumns` : an array of column names used by a filter.
     * `callback` : a function to be called when the response received.
 * Callback function : `function(err, index)`
     * Parameters
@@ -152,15 +219,20 @@ Half-closes the connection.
 
 An object representing MySQL's index.
 
-### Method : Index.find(op, keys, [ limit, [ offset ] ], callback)
+### Method : Index.find(op, keys, [ options ], callback)
 
 To read a records from a table using the index.
 
 * Parameters
     * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
-    * `keys` : an array of index values.
-    * `limit` (optional) : a maximum number of records to be retrieved (default is 1).
-    * `offset` (optional) : a number of records skipped before retrieving records (default is 0)．
+    * `keys` : an array of index values. It can include an IN criterion
+      returned from `index.in()`.
+    * `options` : an object which specifies several options.
+        * `filters` : an array of filter returned from `index.filter()`
+          and/or `index.while()`.
+        * `limit` : a maximum number of records to be retrieved (defaults to 1).
+        * `offset` : a number of records skipped before retrieving records
+          (defaults to 0)．
     * `callback` : a function to be called when the response received.
 * Callback Function : `function(err, results)`
     * Parameters
@@ -179,15 +251,20 @@ To add a records.
     * Parameters
         * `err` : an `Error` object when the request failed, otherwise `null`.
 
-### Method : Index.update(op, keys, [ limit, [ offset ] ], values, callback)
+### Method : Index.update(op, keys, [ options ], values, callback)
 
 To update a records.
 
 * Parametes
     * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
-    * `keys` : an array of index values.
-    * `limit` (optional) : a maximum number of records to be retrieved (default is 1).
-    * `offset` (optional) : a number of records skipped before retrieving records (default is 0)．
+    * `keys` : an array of index values. It can include an IN criterion
+      returned from `index.in()`.
+    * `options` : an object which specifies several options.
+        * `filters` : an array of filter returned from `index.filter()`
+          and/or `index.while()`.
+        * `limit` : a maximum number of records to be retrieved (defaults to 1).
+        * `offset` : a number of records skipped before retrieving records
+          (defaults to 0)．
     * values : an array of new column values which correspond to `columns` parameter of `Connection.openIndex()`.
     * `callback` : a function to be called when the response received.
 * Callback Function : `function(err, rows)`
@@ -201,14 +278,52 @@ To delete a records.
 
 * Parametes
     * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
-    * `keys` : an array of index values.
-    * `limit` (optional) : a maximum number of records to be retrieved (default is 1).
-    * `offset` (optional) : a number of records skipped before retrieving records (default is 0)．
+    * `keys` : an array of index values. It can include an IN criterion
+      returned from `index.in()`.
+    * `options` : an object which specifies several options.
+        * `filters` : an array of filter returned from `index.filter()`
+          and/or `index.while()`.
+        * `limit` : a maximum number of records to be retrieved (defaults to 1).
+        * `offset` : a number of records skipped before retrieving records
+          (defaults to 0)．
     * `callback` : a function to be called when the response received.
 * Callback Function : `function(err, rows)`
     * Parameters
         * `err` : an `Error` object when the request failed, otherwise `null`.
         * `rows` : a number of deleted rows.
+
+### Method : index.in(values...)
+
+Creates and returns an IN criterion object.
+
+* Parameters
+    * `values` : a values of index.
+* Returns
+    * a new IN criterion object.
+
+### Method : index.filter(column, op, value)
+
+Creates and returns a filter criterion object.
+
+* Parameters
+    * `column` : a column name used by this filter. It must be included in
+      `filterColumns` specified `Connection.openIndex()`.
+    * `op` : a filter operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
+    * `value` : a value.
+* Returns
+    * a new filter object.
+
+### Method : index.while(column, op, value)
+
+Creates and returns a filter criterion object.
+
+* Parameters
+    * `column` : a column name used by this filter. It must be included in
+      `filterColumns` specified `Connection.openIndex()`.
+    * `op` : a filter operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
+    * `value` : a value.
+* Returns
+    * a new filter object.
 
 # Test
 
