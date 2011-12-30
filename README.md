@@ -9,8 +9,8 @@ for more information.
 
 # Requirements
 
-- [Node.js](http://nodejs.org/) (> v0.6.0, tested with v0.6.6)
-- [HandlerSocket Plugin for MySQL](https://github.com/ahiguti/HandlerSocket-Plugin-for-MySQL) (> v1.1.0, tested with v1.1.0)
+- [Node.js](http://nodejs.org/) (>= v0.6.0, tested with v0.6.6)
+- [HandlerSocket Plugin for MySQL](https://github.com/ahiguti/HandlerSocket-Plugin-for-MySQL) (>= v1.1.0, tested with v1.1.0)
 
 # Installation
 
@@ -27,7 +27,7 @@ var con = hs.connect(function() {
   con.openIndex('test', 'EMPLOYEE', 'PRIMARY',
                 [ 'EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME' ],
                 function(err, index) {
-    index.find('=', 1, function(err, results) {
+    index.find('=', [ 1 ], function(err, results) {
       console.log(results[0]);
       con.end();
     });
@@ -44,7 +44,7 @@ var con = hs.connect(function() {
   con.openIndex('test', 'EMPLOYEE', 'PRIMARY',
                 [ 'EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME' ],
                 function(err, index) {
-    index.find('>=', 1, { limit: 10, offset: 0 }, function(err, results) {
+    index.find('>=', [ 1 ], { limit: 10, offset: 0 }, function(err, results) {
       results.forEach(function(row) {
         console.log(row);
       });
@@ -63,7 +63,7 @@ var con = hs.connect(function() {
   con.openIndex('test', 'EMPLOYEE', 'PRIMARY',
                 [ 'EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME' ],
                 function(err, index) {
-    index.find('=', hs.in(1, 2, 3),
+    index.find('=', [ hs.in(1, 2, 3) ],
                { limit: 10 },
                function(err, results) {
       results.forEach(function(row) {
@@ -85,8 +85,8 @@ var con = hs.connect(function() {
                 [ 'EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME' ],
                 [ 'EMPLOYEE_NO' ],
                 function(err, index) {
-    index.find('>=', 1, {
-                 filters: hs.filter('EMPLOYEE_NO', '<', 7800),
+    index.find('>=', [ 1 ], {
+                 filters: [ hs.filter('EMPLOYEE_NO', '<', 7800) ],
                  limit: 10
                },
                function(err, results) {
@@ -105,8 +105,9 @@ var con = hs.connect(function() {
 
     var con = hs.connect({port : 9999});
     con.on('connect', function() {
-      con.openIndex('test', 'EMPLOYEE', 'PRIMARY', [ 'EMPLOYEE_ID', 'EMPLOYEE_NO',
-        'EMPLOYEE_NAME' ], function(err, index) {
+      con.openIndex('test', 'EMPLOYEE', 'PRIMARY',
+                    [ 'EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME' ],
+                    function(err, index) {
         index.insert([100, 9999, 'KOICHIK'], function(err) {
           con.end();
         });
@@ -210,9 +211,7 @@ Emitted when a connection is established.
 
 Emitted once the connection is fully closed.
 
-* Callback function: ` function(hadError)`
-    * Parameters
-        * `hadError` : `true` if the socket was closed due to a transmission error.
+* Callback function: ` function()`
 
 ### 'error' event
 
