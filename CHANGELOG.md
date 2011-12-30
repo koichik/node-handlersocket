@@ -1,14 +1,20 @@
 # Changelog
 
--0.0.3
+-0.1.0 (not yet)
+    - added auth support.
+    - added in/filters support.
+    - added increment/decrement support.
+    - added (update|increment|decrement|delete)AndGet() support.
+
+-0.0.3 (2010/11/21)
     - fixed NULL value handling once more.
     - improved error handling.
 
--0.0.2
+-0.0.2 (2010/11/08)
     - fixed NULL value handling.
     - fixed response handling for insert, update and remove.
 
--0.0.1
+-0.0.1 (2010/11/06)
     - fixed NULL value handling.
 
 -0.0.0 (2010/11/03)

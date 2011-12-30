@@ -53,7 +53,7 @@ vows.describe('Find').addBatch({
       },
       'find some records with IN operator' : {
         topic : function(index, con) {
-          index.find('=', index.in(1, 2, 3),
+          index.find('=', hs.in(1, 2, 3),
                      { limit : 10, offset : 0 },
                      this.callback);
         },
@@ -72,7 +72,7 @@ vows.describe('Find').addBatch({
       'find some records with filter' : {
         topic : function(index, con) {
           index.find('<=', 10, {
-                       filters : index.filter('EMPLOYEE_NO', '>', 7800),
+                       filters : hs.filter('EMPLOYEE_NO', '>', 7800),
                        limit : 10
                      }, this.callback);
         },
@@ -91,8 +91,8 @@ vows.describe('Find').addBatch({
         topic : function(index, con) {
           index.find('>=', 10, {
                        filters : [
-                         index.while('EMPLOYEE_NO', '<=', 7900),
-                         index.filter('EMPLOYEE_NAME', '>', 'ADAMS')
+                         hs.while('EMPLOYEE_NO', '<=', 7900),
+                         hs.filter('EMPLOYEE_NAME', '>', 'ADAMS')
                        ],
                        limit : 10
                      }, this.callback);

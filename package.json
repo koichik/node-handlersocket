@@ -24,6 +24,8 @@
   { "vows" : "*"
   }
 , "scripts" :
-  { "test" : "./node_modules/vows/bin/vows test/*.js"
+  { "pretest" : "mysql test < sql/create.sql"
+  , "test" : "./node_modules/vows/bin/vows test/*.js"
+  , "posttest" : "mysql test < sql/drop.sql"
   }
 }

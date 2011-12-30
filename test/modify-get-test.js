@@ -155,7 +155,7 @@ suite.addBatch({
       openIndexNameAndVersion({ port : 9999, auth : 'node' },
                               function(err, index) {
         if (err) return self.callback(err);
-        index.updateAndGet('=', index.in(100, 101),
+        index.updateAndGet('=', hs.in(100, 101),
                            { limit: 10 },
                            [ 'KOICHIK', 3 ], self.callback);
       })
@@ -195,7 +195,7 @@ suite.addBatch({
                               function(err, index) {
         if (err) return self.callback(err);
         index.updateAndGet('>=', 100, {
-                             filters: index.filter('EMPLOYEE_NO', '>', 9000),
+                             filters: hs.filter('EMPLOYEE_NO', '>', 9000),
                              limit: 10
                            },
                            [ 'EBIYURI', 4 ], self.callback);

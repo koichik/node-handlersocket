@@ -9,8 +9,8 @@ for more information.
 
 # Requirements
 
-- [Node.js](http://nodejs.org/) (> 0.3.0, tested with 0.3.1)
-- [HandlerSocket](https://github.com/ahiguti/HandlerSocket-Plugin-for-MySQL) (tested with v1.0.6)
+- [Node.js](http://nodejs.org/) (> v0.6.0, tested with v0.6.6)
+- [HandlerSocket Plugin for MySQL](https://github.com/ahiguti/HandlerSocket-Plugin-for-MySQL) (> v1.1.0, tested with v1.1.0)
 
 # Installation
 
@@ -63,7 +63,7 @@ var con = hs.connect(function() {
   con.openIndex('test', 'EMPLOYEE', 'PRIMARY',
                 [ 'EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME' ],
                 function(err, index) {
-    index.find('=', index.in(1, 2, 3),
+    index.find('=', hs.in(1, 2, 3),
                { limit: 10 },
                function(err, results) {
       results.forEach(function(row) {
@@ -86,7 +86,7 @@ var con = hs.connect(function() {
                 [ 'EMPLOYEE_NO' ],
                 function(err, index) {
     index.find('>=', 1, {
-                 filters: index.filter('EMPLOYEE_NO', '<', 7800),
+                 filters: hs.filter('EMPLOYEE_NO', '<', 7800),
                  limit: 10
                },
                function(err, results) {
@@ -145,7 +145,7 @@ var con = hs.connect(function() {
 
 # API
 
-## Function : hs.connect([ options ], [ connectListener ])
+## hs.connect([ options ], [ connectListener ])
 
 Open a connection to HandlerSocket server.
 
@@ -162,32 +162,59 @@ Open a connection to HandlerSocket server.
 * Returns
     * a new `Connection` object.
 
-## Object : Connection
+### hs.in(values...)
+
+Creates and returns an IN criterion object.
+
+* Parameters
+    * `values` : a values of index.
+* Returns
+    * a new IN criterion object.
+
+### hs.filter(column, op, value)
+
+Creates and returns a filter criterion object.
+
+* Parameters
+    * `column` : a column name used by this filter. It must be included in
+      `filterColumns` specified `Connection.openIndex()`.
+    * `op` : a filter operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
+    * `value` : a value.
+* Returns
+    * a new filter object.
+
+### Function : hs.while(column, op, value)
+
+Creates and returns a filter criterion object.
+
+* Parameters
+    * `column` : a column name used by this filter. It must be included in
+      `filterColumns` specified `Connection.openIndex()`.
+    * `op` : a filter operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
+    * `value` : a value.
+* Returns
+    * a new filter object.
+
+## Connection
 
 An object representing connection to HandlerSocket.
 It is an instance of `EventEmitter`.
 
-### Event : 'connect'
+### 'connect' event
 
 Emitted when a connection is established.
 
 * Callback function: ` function()`
 
-### Envent : 'end'
-
-Emitted when the other end of the stream sends a FIN packet.
-
-* Callback function: ` function()`
-
-### Event : 'close' (hadError)
+### 'close' event
 
 Emitted once the connection is fully closed.
 
 * Callback function: ` function(hadError)`
     * Parameters
-        * `hadError` : `true` if the stream was closed due to a transmission error.
+        * `hadError` : `true` if the socket was closed due to a transmission error.
 
-### Event : 'error'
+### 'error' event
 
 Emitted when an error occurs.
 
@@ -195,7 +222,7 @@ Emitted when an error occurs.
     * Parameters
         * `err` : an error that occurred.
 
-### Method : Connection.openIndex(database, table, index, columns, filterColumns, callback)
+### Connection.prototype.openIndex(database, table, index, columns, filterColumns, callback)
 
 Open an index.
 
@@ -211,25 +238,25 @@ Open an index.
         * `err` : an `Error` object when the request failed, otherwise `null`.
         * `index` : a new `Index` object.
 
-### Method : Connection.end()
+### Connection.prototype.close()
 
 Half-closes the connection.
 
-## Object : Index
+## Index
 
 An object representing MySQL's index.
 
-### Method : Index.find(op, keys, [ options ], callback)
+### Index.prototype.find(op, keys, [ options ], callback)
 
 To read a records from a table using the index.
 
 * Parameters
     * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
     * `keys` : an array of index values. It can include an IN criterion
-      returned from `index.in()`.
+      returned from `hs.in()`.
     * `options` : an object which specifies several options.
-        * `filters` : an array of filter returned from `index.filter()`
-          and/or `index.while()`.
+        * `filters` : an array of filter returned from `hs.filter()`
+          and/or `hs.while()`.
         * `limit` : a maximum number of records to be retrieved (defaults to 1).
         * `offset` : a number of records skipped before retrieving records
           (defaults to 0)．
@@ -240,7 +267,7 @@ To read a records from a table using the index.
         * `results` : an array of records.
         Each recored is array of column values which correspond to `columns` parameter of `Connection.openIndex()`.
 
-### Method : Index.insert(values, callback)
+### Index.prototype.insert(values, callback)
 
 To add a records.
 
@@ -251,17 +278,17 @@ To add a records.
     * Parameters
         * `err` : an `Error` object when the request failed, otherwise `null`.
 
-### Method : Index.update(op, keys, [ options ], values, callback)
+### Index.prototype.update(op, keys, [ options ], values, callback)
 
 To update a records.
 
 * Parametes
     * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
     * `keys` : an array of index values. It can include an IN criterion
-      returned from `index.in()`.
+      returned from `hs.in()`.
     * `options` : an object which specifies several options.
-        * `filters` : an array of filter returned from `index.filter()`
-          and/or `index.while()`.
+        * `filters` : an array of filter returned from `hs.filter()`
+          and/or `hs.while()`.
         * `limit` : a maximum number of records to be retrieved (defaults to 1).
         * `offset` : a number of records skipped before retrieving records
           (defaults to 0)．
@@ -272,17 +299,17 @@ To update a records.
         * `err` : an `Error` object when the request failed, otherwise `null`.
         * `rows` : a number of updated rows.
 
-### Method : Index.updateAndGet(op, keys, [ options ], values, callback)
+### Index.prototype.updateAndGet(op, keys, [ options ], values, callback)
 
 To update a records.
 
 * Parametes
     * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
     * `keys` : an array of index values. It can include an IN criterion
-      returned from `index.in()`.
+      returned from `hs.in()`.
     * `options` : an object which specifies several options.
-        * `filters` : an array of filter returned from `index.filter()`
-          and/or `index.while()`.
+        * `filters` : an array of filter returned from `hs.filter()`
+          and/or `hs.while()`.
         * `limit` : a maximum number of records to be retrieved (defaults to 1).
         * `offset` : a number of records skipped before retrieving records
           (defaults to 0)．
@@ -295,17 +322,17 @@ To update a records.
           Each recored is an array of column values which correspond to
           `columns` parameter of `Connection.openIndex()`.
 
-### Method : Index.increment(op, keys, [ options ], values, callback)
+### Index.prototype.increment(op, keys, [ options ], values, callback)
 
 To increment a records.
 
 * Parametes
     * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
     * `keys` : an array of index values. It can include an IN criterion
-      returned from `index.in()`.
+      returned from `hs.in()`.
     * `options` : an object which specifies several options.
-        * `filters` : an array of filter returned from `index.filter()`
-          and/or `index.while()`.
+        * `filters` : an array of filter returned from `hs.filter()`
+          and/or `hs.while()`.
         * `limit` : a maximum number of records to be retrieved (defaults to 1).
         * `offset` : a number of records skipped before retrieving records
           (defaults to 0)．
@@ -316,17 +343,17 @@ To increment a records.
         * `err` : an `Error` object when the request failed, otherwise `null`.
         * `rows` : a number of updated rows.
 
-### Method : Index.incrementAndGet(op, keys, [ options ], values, callback)
+### Index.prototype.incrementAndGet(op, keys, [ options ], values, callback)
 
 To increment a records.
 
 * Parametes
     * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
     * `keys` : an array of index values. It can include an IN criterion
-      returned from `index.in()`.
+      returned from `hs.in()`.
     * `options` : an object which specifies several options.
-        * `filters` : an array of filter returned from `index.filter()`
-          and/or `index.while()`.
+        * `filters` : an array of filter returned from `hs.filter()`
+          and/or `hs.while()`.
         * `limit` : a maximum number of records to be retrieved (defaults to 1).
         * `offset` : a number of records skipped before retrieving records
           (defaults to 0)．
@@ -339,17 +366,17 @@ To increment a records.
           Each recored is an array of column values which correspond to
           `columns` parameter of `Connection.openIndex()`.
 
-### Method : Index.decrement(op, keys, [ options ], values, callback)
+### Index.prototype.decrement(op, keys, [ options ], values, callback)
 
 To deirement a records.
 
 * Parametes
     * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
     * `keys` : an array of index values. It can include an IN criterion
-      returned from `index.in()`.
+      returned from `hs.in()`.
     * `options` : an object which specifies several options.
-        * `filters` : an array of filter returned from `index.filter()`
-          and/or `index.while()`.
+        * `filters` : an array of filter returned from `hs.filter()`
+          and/or `hs.while()`.
         * `limit` : a maximum number of records to be retrieved (defaults to 1).
         * `offset` : a number of records skipped before retrieving records
           (defaults to 0)．
@@ -360,17 +387,17 @@ To deirement a records.
         * `err` : an `Error` object when the request failed, otherwise `null`.
         * `rows` : a number of updated rows.
 
-### Method : Index.decrementAndGet(op, keys, [ options ], values, callback)
+### Index.prototype.decrementAndGet(op, keys, [ options ], values, callback)
 
 To deirement a records.
 
 * Parametes
     * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
     * `keys` : an array of index values. It can include an IN criterion
-      returned from `index.in()`.
+      returned from `hs.in()`.
     * `options` : an object which specifies several options.
-        * `filters` : an array of filter returned from `index.filter()`
-          and/or `index.while()`.
+        * `filters` : an array of filter returned from `hs.filter()`
+          and/or `hs.while()`.
         * `limit` : a maximum number of records to be retrieved (defaults to 1).
         * `offset` : a number of records skipped before retrieving records
           (defaults to 0)．
@@ -383,17 +410,17 @@ To deirement a records.
           Each recored is an array of column values which correspond to
           `columns` parameter of `Connection.openIndex()`.
 
-### Method : Index.delete(op, keys, [ limit, [ offset ] ], callback)
+### Index.prototype.delete(op, keys, [ limit, [ offset ] ], callback)
 
 To delete a records.
 
 * Parametes
     * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
     * `keys` : an array of index values. It can include an IN criterion
-      returned from `index.in()`.
+      returned from `hs.in()`.
     * `options` : an object which specifies several options.
-        * `filters` : an array of filter returned from `index.filter()`
-          and/or `index.while()`.
+        * `filters` : an array of filter returned from `hs.filter()`
+          and/or `hs.while()`.
         * `limit` : a maximum number of records to be retrieved (defaults to 1).
         * `offset` : a number of records skipped before retrieving records
           (defaults to 0)．
@@ -403,17 +430,17 @@ To delete a records.
         * `err` : an `Error` object when the request failed, otherwise `null`.
         * `rows` : a number of deleted rows.
 
-### Method : Index.deleteAndGet(op, keys, [ limit, [ offset ] ], callback)
+### Index.prototype.deleteAndGet(op, keys, [ limit, [ offset ] ], callback)
 
 To delete a records.
 
 * Parametes
     * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
     * `keys` : an array of index values. It can include an IN criterion
-      returned from `index.in()`.
+      returned from `hs.in()`.
     * `options` : an object which specifies several options.
-        * `filters` : an array of filter returned from `index.filter()`
-          and/or `index.while()`.
+        * `filters` : an array of filter returned from `hs.filter()`
+          and/or `hs.while()`.
         * `limit` : a maximum number of records to be retrieved (defaults to 1).
         * `offset` : a number of records skipped before retrieving records
           (defaults to 0)．
@@ -425,42 +452,13 @@ To delete a records.
           Each recored is an array of column values which correspond to
           `columns` parameter of `Connection.openIndex()`.
 
-### Method : index.in(values...)
-
-Creates and returns an IN criterion object.
-
-* Parameters
-    * `values` : a values of index.
-* Returns
-    * a new IN criterion object.
-
-### Method : index.filter(column, op, value)
-
-Creates and returns a filter criterion object.
-
-* Parameters
-    * `column` : a column name used by this filter. It must be included in
-      `filterColumns` specified `Connection.openIndex()`.
-    * `op` : a filter operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
-    * `value` : a value.
-* Returns
-    * a new filter object.
-
-### Method : index.while(column, op, value)
-
-Creates and returns a filter criterion object.
-
-* Parameters
-    * `column` : a column name used by this filter. It must be included in
-      `filterColumns` specified `Connection.openIndex()`.
-    * `op` : a filter operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
-    * `value` : a value.
-* Returns
-    * a new filter object.
-
 # Test
 
 node-handlersocket depends on [Vows](http://vowsjs.org/) for testing.
+
+    npm test
+
+or
 
     mysql -u root -p test < sql/create.sql
     vows test/*.js
