@@ -272,6 +272,29 @@ To update a records.
         * `err` : an `Error` object when the request failed, otherwise `null`.
         * `rows` : a number of updated rows.
 
+### Method : Index.updateAndGet(op, keys, [ options ], values, callback)
+
+To update a records.
+
+* Parametes
+    * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
+    * `keys` : an array of index values. It can include an IN criterion
+      returned from `index.in()`.
+    * `options` : an object which specifies several options.
+        * `filters` : an array of filter returned from `index.filter()`
+          and/or `index.while()`.
+        * `limit` : a maximum number of records to be retrieved (defaults to 1).
+        * `offset` : a number of records skipped before retrieving records
+          (defaults to 0)．
+    * values : an array of new column values which correspond to `columns` parameter of `Connection.openIndex()`.
+    * `callback` : a function to be called when the response received.
+* Callback Function : `function(err, results)`
+    * Parameters
+        * `err` : an `Error` object when the request failed, otherwise `null`.
+        * `results` : an array of records before modification.
+          Each recored is an array of column values which correspond to
+          `columns` parameter of `Connection.openIndex()`.
+
 ### Method : Index.increment(op, keys, [ options ], values, callback)
 
 To increment a records.
@@ -292,6 +315,29 @@ To increment a records.
     * Parameters
         * `err` : an `Error` object when the request failed, otherwise `null`.
         * `rows` : a number of updated rows.
+
+### Method : Index.incrementAndGet(op, keys, [ options ], values, callback)
+
+To increment a records.
+
+* Parametes
+    * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
+    * `keys` : an array of index values. It can include an IN criterion
+      returned from `index.in()`.
+    * `options` : an object which specifies several options.
+        * `filters` : an array of filter returned from `index.filter()`
+          and/or `index.while()`.
+        * `limit` : a maximum number of records to be retrieved (defaults to 1).
+        * `offset` : a number of records skipped before retrieving records
+          (defaults to 0)．
+    * values : an array of incremental values which correspond to `columns` parameter of `Connection.openIndex()`.
+    * `callback` : a function to be called when the response received.
+* Callback Function : `function(err, results)`
+    * Parameters
+        * `err` : an `Error` object when the request failed, otherwise `null`.
+        * `results` : an array of records before modification.
+          Each recored is an array of column values which correspond to
+          `columns` parameter of `Connection.openIndex()`.
 
 ### Method : Index.decrement(op, keys, [ options ], values, callback)
 
@@ -314,6 +360,29 @@ To deirement a records.
         * `err` : an `Error` object when the request failed, otherwise `null`.
         * `rows` : a number of updated rows.
 
+### Method : Index.decrementAndGet(op, keys, [ options ], values, callback)
+
+To deirement a records.
+
+* Parametes
+    * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
+    * `keys` : an array of index values. It can include an IN criterion
+      returned from `index.in()`.
+    * `options` : an object which specifies several options.
+        * `filters` : an array of filter returned from `index.filter()`
+          and/or `index.while()`.
+        * `limit` : a maximum number of records to be retrieved (defaults to 1).
+        * `offset` : a number of records skipped before retrieving records
+          (defaults to 0)．
+    * values : an array of decremental values which correspond to `columns` parameter of `Connection.openIndex()`.
+    * `callback` : a function to be called when the response received.
+* Callback Function : `function(err, results)`
+    * Parameters
+        * `err` : an `Error` object when the request failed, otherwise `null`.
+        * `results` : an array of records before modification.
+          Each recored is an array of column values which correspond to
+          `columns` parameter of `Connection.openIndex()`.
+
 ### Method : Index.delete(op, keys, [ limit, [ offset ] ], callback)
 
 To delete a records.
@@ -333,6 +402,28 @@ To delete a records.
     * Parameters
         * `err` : an `Error` object when the request failed, otherwise `null`.
         * `rows` : a number of deleted rows.
+
+### Method : Index.deleteAndGet(op, keys, [ limit, [ offset ] ], callback)
+
+To delete a records.
+
+* Parametes
+    * `op` : a search operation, one of `'='`, `'>'`, `'>='`, `'<'` and `'<='`.
+    * `keys` : an array of index values. It can include an IN criterion
+      returned from `index.in()`.
+    * `options` : an object which specifies several options.
+        * `filters` : an array of filter returned from `index.filter()`
+          and/or `index.while()`.
+        * `limit` : a maximum number of records to be retrieved (defaults to 1).
+        * `offset` : a number of records skipped before retrieving records
+          (defaults to 0)．
+    * `callback` : a function to be called when the response received.
+* Callback Function : `function(err, results)`
+    * Parameters
+        * `err` : an `Error` object when the request failed, otherwise `null`.
+        * `results` : an array of records before deletion.
+          Each recored is an array of column values which correspond to
+          `columns` parameter of `Connection.openIndex()`.
 
 ### Method : index.in(values...)
 
