@@ -7,8 +7,8 @@ var hs = require('../index');
 //hs._debug = true;
 var con;
 vows.describe('OpenIndex').addBatch({
-  'connect =>' : {
-    topic : function() {
+  'connect =>': {
+    topic: function() {
       var emitter = new events.EventEmitter();
       con = hs.connect();
       con.on('connect', function() {
@@ -16,22 +16,25 @@ vows.describe('OpenIndex').addBatch({
       });
       return emitter;
     },
-    'open index to primary key of EMPOYEE table' : {
-      topic : function(con) {
-        con.openIndex('test', 'EMPLOYEE', 'PRIMARY', [ 'EMPLOYEE_ID', 'EMPLOYEE_NO',
-          'EMPLOYEE_NAME' ], this.callback);
+
+    'open index to primary key of EMPOYEE table': {
+      topic: function(con) {
+        con.openIndex('test', 'EMPLOYEE', 'PRIMARY',
+                      ['EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME'],
+                      this.callback);
       },
-      'should pass null to error' : function(err, index) {
+      'should pass null to error': function(err, index) {
         assert.isNull(err);
       },
-      'should create a new Index object' : function(err, index) {
-        assert.instanceOf(index, hs.Index);
+      'should create a new Index object': function(err, index) {
+        assert.instanceOf(index, hs._Index);
       },
-      'shoud have 3 columns' : function(err, index) {
+      'shoud have 3 columns': function(err, index) {
         assert.equal(index._columnCount, 3);
       }
     },
-    teardown : function(con) {
+
+    teardown: function(con) {
       con.close();
     }
   }

@@ -4,8 +4,8 @@ var events = require('events');
 var hs = require('../index');
 
 vows.describe('Connect').addBatch({
-  'connecting' : {
-    topic : function() {
+  'connecting': {
+    topic: function() {
       return function(options) {
         var emitter = new events.EventEmitter();
         var con = hs.connect(options);
@@ -19,54 +19,59 @@ vows.describe('Connect').addBatch({
         return emitter;
       }
     },
-    'with default host and port' : {
-      topic : function(connect) {
+
+    'with default host and port': {
+      topic: function(connect) {
         return connect();
       },
-      'should create a new Connection object' : function(con) {
-        assert.instanceOf(con, hs.Connection);
+      'should create a new Connection object': function(con) {
+        assert.instanceOf(con, hs._Connection);
       }
     },
-    'with specific host and port' : {
-      topic : function(connect) {
+
+    'with specific host and port': {
+      topic: function(connect) {
         return connect({
-          host : '127.0.0.1',
-          port : 9999
+          host: '127.0.0.1',
+          port: 9999
         });
       },
-      'should create a new Connection object' : function(con) {
-        assert.instanceOf(con, hs.Connection);
+      'should create a new Connection object': function(con) {
+        assert.instanceOf(con, hs._Connection);
       }
     },
-    'with illegal port' : {
-      topic : function(connect) {
+
+    'with illegal port': {
+      topic: function(connect) {
         return connect({
-          port : 10000
+          port: 10000
         });
       },
-      'should pass an Error object' : function(con) {
+      'should pass an Error object': function(con) {
         assert.instanceOf(con, Error);
       }
     },
-    'with auth' : {
-      topic : function(connect) {
+
+    'with auth': {
+      topic: function(connect) {
         return connect({
-          port : 9999,
-          auth : 'node'
+          port: 9999,
+          auth: 'node'
         });
       },
-      'should create a new Connection object' : function(con) {
-        assert.instanceOf(con, hs.Connection);
+      'should create a new Connection object': function(con) {
+        assert.instanceOf(con, hs._Connection);
       }
     },
-    'with illegal auth' : {
-      topic : function(connect) {
+
+    'with illegal auth': {
+      topic: function(connect) {
         return connect({
-          port : 9999,
-          auth : 'hoge'
+          port: 9999,
+          auth: 'hoge'
         });
       },
-      'should pass an Error object' : function(con) {
+      'should pass an Error object': function(con) {
         assert.instanceOf(con, Error);
       }
     }

@@ -1,31 +1,39 @@
-{ "name" : "node-handlersocket"
-, "version" : "0.1.0-pre"
-, "description" : "HandlerSocket client for Node.js"
-, "homepage" : "http://github.com/koichik/node-handlersocket/"
-, "author" : "Koichi Kobayashi <koichik@improvement.jp>"
-, "main" : "./index.js"
-, "directories" :
-  { "lib" : "./lib"
-  , "example" : "./example"
-  }
-, "licenses" :
-    [ { "type" : "The MIT License"
-    , "url": "http://www.opensource.org/licenses/mit-license.php"
-      }
-    ]
-, "repositories" :
-  { "type" : "git"
-  , "url" : "http://github.com/koichik/node-handlersocket.git"
-  , "private" : "git@github.com:koichik/node-handlersocket.git"
-  , "web" : "http://github.com/koichik/node-handlersocket"
-  }
-, "engines" : { "node" : ">=0.6.0" }
-, "devDependencies" :
-  { "vows" : "*"
-  }
-, "scripts" :
-  { "pretest" : "mysql test < sql/create.sql"
-  , "test" : "./node_modules/vows/bin/vows test/*.js"
-  , "posttest" : "mysql test < sql/drop.sql"
+{
+  "name": "node-handlersocket" ,
+  "version": "0.1.0-pre",
+  "description": "HandlerSocket client for Node.js",
+  "keywords": [
+    "database",
+    "mysql",
+    "handlersocket"
+  ],
+  "homepage": "http://github.com/koichik/node-handlersocket/",
+  "author": "Koichi Kobayashi <koichik@improvement.jp>",
+  "main": "./index.js",
+  "directories": {
+    "lib": "./lib",
+    "example": "./example"
+  },
+  "licenses": [
+    {
+      "type": "The MIT License",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "repositories": {
+    "type": "git",
+    "url": "http://github.com/koichik/node-handlersocket.git",
+    "private": "git@github.com:koichik/node-handlersocket.git",
+    "web": "http://github.com/koichik/node-handlersocket"
+  },
+  "engines": {"node": ">=0.6.0"},
+  "devDependencies": {
+    "vows" : "*",
+    "slide": "*"
+  },
+  "scripts": {
+    "pretest": "mysql test < sql/create.sql",
+    "test": "./node_modules/vows/bin/vows test/*.js",
+    "posttest" : "mysql test < sql/drop.sql"
   }
 }

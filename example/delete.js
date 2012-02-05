@@ -1,33 +1,23 @@
 var hs = require('../index');
-var asyncMap = require('slide').asyncMap;
-
-var insertRecords = [
-  [200, 9999, null],
-  [300, 9998, null],
-  [400, 9997, null],
-  [500, 9996, null]
-];
 
 //hs._debug = true;
-var con = hs.connect({port : 9999, auth: 'node'});
+var con = hs.connect({port: 9999, auth: 'node'});
 con.on('connect', function() {
   con.openIndex('test', 'EMPLOYEE', 'PRIMARY',
                 ['EMPLOYEE_ID', 'EMPLOYEE_NO', 'EMPLOYEE_NAME'],
                 function(err, index) {
     if (err) {
       console.log(err);
-      con.close();
+      con.clode();
       return;
     }
-    asyncMap(insertRecords, function(rec, callback) {
-      index.insert(rec, callback);
-    }, function(err, rows) {
+    index.delete('>=', 100, {limit: 100}, function(err, rows) {
       if (err) {
         console.log(err);
-        con.close();
+        con.clode();
         return;
       }
-      console.log(rows.length + ' row(s) inserted');
+      console.log(rows + ' row(s) deleted');
       con.close();
     });
   });
