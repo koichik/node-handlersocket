@@ -1,6 +1,6 @@
 # Changelog
 
- - 0.1.0 (not yet)
+ - 0.1.0 (2011/02/05)
    - added the new features that latest HanslerSocket provided.
      - authentication.
      - in/filters.

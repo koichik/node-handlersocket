@@ -1,6 +1,6 @@
 {
   "name": "node-handlersocket" ,
-  "version": "0.1.0-pre",
+  "version": "0.1.0",
   "description": "HandlerSocket client for Node.js",
   "keywords": [
     "database",
