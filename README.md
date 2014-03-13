@@ -7,7 +7,7 @@ node-handlersocket is a pure JavaScript client for HandlerSocket.
 # Requirements
 
 - [Node.js](http://nodejs.org/) (>= v0.6.0, tested with v0.6.10)
-- [HandlerSocket Plugin for MySQL](https://github.com/DeNADev/HandlerSocket-Plugin-for-MySQL) (>= v1.1.0, tested with v1.1.0)
+- [HandlerSocket Plugin for MySQL](https://github.com/DeNA/HandlerSocket-Plugin-for-MySQL) (>= v1.1.0, tested with v1.1.0)
 
 # Installation
 
